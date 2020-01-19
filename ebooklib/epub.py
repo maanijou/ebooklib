@@ -35,7 +35,7 @@ from ebooklib.utils import parse_string, parse_html_string, guess_type, get_page
 
 
 # Version of EPUB library
-VERSION = (0, 17, 0)
+VERSION = (0, 17, 1)
 
 NAMESPACES = {'XML': 'http://www.w3.org/XML/1998/namespace',
               'EPUB': 'http://www.idpf.org/2007/ops',
@@ -303,6 +303,9 @@ class EpubHtml(EpubItem):
         >>> add_link(href='styles.css', rel='stylesheet', type='text/css')
         """
         self.links.append(kwgs)
+        if kwgs.get('type') == 'text/javascript':
+            if 'scripted' not in self.properties:
+                self.properties.append('scripted')
 
     def get_links(self):
         """
@@ -423,6 +426,7 @@ class EpubHtml(EpubItem):
         _body = etree.SubElement(tree_root, 'body')
         if self.direction:
             _body.set('dir', self.direction)
+            tree_root.set('dir', self.direction)
 
         body = html_tree.find('body')
         if body is not None:
